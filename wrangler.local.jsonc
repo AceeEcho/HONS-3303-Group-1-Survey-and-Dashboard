@@ -1,0 +1,7 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "fieldwork-local", "main": "src/worker.js", "compatibility_date": "2026-09-01",
+  "assets": {"directory": "./dist", "binding": "ASSETS", "run_worker_first": true},
+  "vars": {"APP_MODE": "local", "ENVIRONMENT": "development", "PUBLIC_SURVEY_URL": "http://127.0.0.1:8787"},
+  "d1_databases": [{"binding":"DB","database_name":"fieldwork-local","database_id":"local-fieldwork","migrations_dir":"migrations"}]
+}

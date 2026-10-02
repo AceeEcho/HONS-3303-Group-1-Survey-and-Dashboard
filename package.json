@@ -1,0 +1,28 @@
+{
+  "name": "fieldwork-survey-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Public anonymous surveys and a separate private research studio on Cloudflare Workers and D1",
+  "scripts": {
+    "build": "vite build",
+    "dev": "npm run build && wrangler dev --config wrangler.local.jsonc --ip 127.0.0.1 --port 8787 --inspector-port 9230",
+    "db:local": "wrangler d1 migrations apply DB --local --config wrangler.local.jsonc",
+    "test": "node --test tests/unit.test.js tests/integration.test.js",
+    "test:browser": "playwright test",
+    "check:deploy": "node scripts/check-deploy.mjs",
+    "deploy:public": "npm run check:deploy && npm run build && wrangler deploy --config wrangler.public.jsonc",
+    "deploy:admin": "npm run check:deploy && npm run build && wrangler deploy --config wrangler.admin.jsonc"
+  },
+  "dependencies": {
+    "jose": "^6.1.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "esbuild": "^0.28.2",
+    "miniflare": "^5.20261001.0-alpha",
+    "vite": "^7.1.7",
+    "wrangler": "^4.40.0"
+  }
+}

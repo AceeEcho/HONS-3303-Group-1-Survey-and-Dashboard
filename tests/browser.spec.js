@@ -1,0 +1,24 @@
+import {test,expect} from '@playwright/test';
+test('desktop/mobile authoring, survey submission, response inspection and reduced motion',async({page,context})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1440,height:1040});await page.goto('/admin');
+ await expect(page.getByRole('button',{name:'Open local studio'}).or(page.getByRole('heading',{name:'Your study starts here'}))).toBeVisible();
+ if(await page.getByRole('button',{name:'Open local studio'}).isVisible())await page.getByRole('button',{name:'Open local studio'}).click();
+ await expect(page.getByRole('heading',{name:'Your study starts here'})).toBeVisible();
+ await page.screenshot({path:'docs/studio-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:'docs/studio-mobile.png',fullPage:true});
+ await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.getByRole('button',{name:'Add first question'}).click();
+ await page.getByLabel('Question',{exact:true}).fill('QA-only question');await page.getByRole('switch',{name:'Required answer'}).check();await page.getByLabel('Survey title',{exact:true}).fill('Browser QA fixture');
+ await page.getByRole('button',{name:'Save draft',exact:true}).click();await expect(page.getByRole('status')).toContainText('Draft saved');
+ await page.reload();await expect(page.getByText('QA-only question',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Publish',exact:true}).click();await page.getByRole('button',{name:'Publish survey',exact:true}).click();await expect(page.getByRole('status')).toContainText('published');
+ await page.getByRole('button',{name:'Share & access'}).click();await expect(page.locator('#qr')).toBeVisible();
+ const respondent=await context.newPage();await respondent.goto('/');await expect(respondent.getByRole('heading',{name:'Browser QA fixture'})).toBeVisible();
+ await respondent.getByRole('button',{name:'Send response'}).click();await expect(respondent.getByText('Please answer this question.')).toBeVisible();
+ await respondent.getByRole('textbox',{name:'QA-only question'}).fill('Browser fixture answer');await respondent.getByRole('button',{name:'Send response'}).click();await expect(respondent.getByRole('heading',{name:'Thank you for your perspective.'})).toBeVisible();
+ await page.getByRole('button',{name:'Responses'}).click();await page.getByText('Anonymous response',{exact:true}).click();await expect(page.getByText('Browser fixture answer',{exact:true})).toBeVisible();
+ await page.emulateMedia({reducedMotion:'reduce'});await page.getByRole('button',{name:'Survey builder'}).click();
+ const duration=await page.locator('.question-card').evaluate(el=>getComputedStyle(el).animationDuration);expect(duration).toBe('0s');
+ await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);
+});
