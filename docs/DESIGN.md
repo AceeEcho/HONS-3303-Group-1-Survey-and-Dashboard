@@ -1,15 +1,12 @@
-# Design direction
+# HONS 3303 design
 
-An editorial research workspace: deep teal structure, lime for selected or primary moments, open space for study content, clear question hierarchy. The respondent experience is a centered, calm form; the private workspace provides explicit draft/publication state and contextual editing. There are no invented study prompts, participants or metrics.
+The creator dashboard uses concise functional headings: Survey creator, Responses, and Sharing and access. Promotional copy was removed. Status, validation, privacy and workflow instructions remain.
 
-Motion is purposeful: 120ms button press, short opacity/translate question insertion, quiet panel entry. No scroll hijacking, perpetual effects or heavy animation library. Reduced-motion immediately disables animation/transition. System fonts avoid third-party font requests by participants.
+A charcoal navigation rail, neutral backgrounds and white forms keep the workspace readable. A darker scarlet is reserved for primary actions and selected-state accents so text contrast stays accessible. Texas Tech's Double T sits to the left of HONS 3303 in the header. The logo is served locally, not loaded from a third party during survey use.
 
-The following user-requested repositories were inspected read-only. Their relevant skill instructions informed layout, hierarchy, spacing, accessible components and visual QA. They were not installed or executed:
+Logo source: https://www.ttu.edu/brand/images/visual-identity/double-t.svg
+Brand reference: https://www.ttu.edu/brand/visual-identity/
 
-- [arez-xd core design taste](https://github.com/arez-xd/ux-ui-design-taste/blob/main/skills/design-taste/SKILL.md)
-- [Component guidance](https://github.com/arez-xd/ux-ui-design-taste/blob/main/skills/design-taste/references/component-taste.md)
-- [Accessibility review](https://github.com/arez-xd/ux-ui-design-taste/blob/main/skills/design-taste/references/accessibility-review.md)
-- [Motion guidance](https://github.com/arez-xd/ux-ui-design-taste/blob/main/skills/design-taste/references/motion-taste.md)
-- [MengTo design-first UI](https://github.com/MengTo/Skills/blob/main/agent-skills/ui/design-first-ui-prompting/SKILL.md)
-- [MengTo progressive motion safeguards](https://github.com/MengTo/Skills/blob/main/agent-skills/web-design/build-awwwards-quality-sites/SKILL.md)
-- [dachent rendered frontend QA](https://github.com/dachent/skills/blob/main/frontend-design-codex/SKILL.md)
+Existing CSS feedback is retained for buttons, question insertion, tabs, dialogs and toasts. Reduced-motion preferences disable nonessential motion. Autosave updates the save indicator without rerendering the editor or interrupting typing. Remote draft updates preserve focus, text selection and scroll position.
+
+Desktop and 390px mobile screenshots cover the empty creator, labeled-scale response form and conflict-review state. Visual lint reports cover contrast, text sizing, overflow and console errors. Synthetic QA content stays in isolated local D1 databases.

@@ -68,8 +68,8 @@ async function body(req) {
 }
 const state = (env) =>
   env.DB.prepare("SELECT * FROM survey WHERE id=1").first();
-async function overview(env, user) {
-  const s = await state(env);
+async function overview(env, user, savedSnapshot = null) {
+  const s = savedSnapshot || (await state(env));
   const versions = await env.DB.prepare(
     "SELECT id,number,published_at FROM revisions ORDER BY number DESC",
   ).all();
@@ -171,20 +171,22 @@ async function handle(req, env) {
       if (!Number.isInteger(input.expected_version))
         throw new HttpError(400, "A draft version is required.");
       const r = await env.DB.prepare(
-        "UPDATE survey SET draft_json=?,draft_version=draft_version+1,updated_at=? WHERE id=1 AND draft_version=?",
+        "UPDATE survey SET draft_json=?,draft_version=draft_version+1,updated_at=? WHERE id=1 AND draft_version=? RETURNING *",
       )
         .bind(
           JSON.stringify(draft),
           new Date().toISOString(),
           input.expected_version,
         )
-        .run();
-      if (!r.meta.changes)
+        .first();
+      if (!r)
         throw new HttpError(
           409,
           "This draft changed in another window. Reload before saving.",
         );
-      return json(await overview(env, user));
+      // Return this write's atomic snapshot. A later creator save must not be
+      // mistaken for the version acknowledged by the client that just saved.
+      return json(await overview(env, user, r));
     }
     if (p === "/api/admin/publish" && req.method === "POST") {
       const input = await body(req),
@@ -276,7 +278,7 @@ async function handle(req, env) {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition":
-            'attachment; filename="fieldwork-responses.csv"',
+            'attachment; filename="hons3303-responses.csv"',
           "Cache-Control": "private, no-store",
         },
       });

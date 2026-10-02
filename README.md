@@ -1,4 +1,4 @@
-# Fieldwork Survey Studio
+# HONS 3303 Survey and Dashboard
 
 A standalone class survey app with a public respondent site, a private creator dashboard and one shared Cloudflare D1 database. It is separate from EchoShop and WakeDock.
 
@@ -12,12 +12,12 @@ The study starts blank and unpublished. Open the dashboard, enter one of the fou
 
 ## Features
 
-- Short text, multiple choice, checkboxes and ratings; optional or required answers
-- Editable title, introduction and consent; explicit saving and publishing
+- Short text, multiple choice, checkboxes, numeric ratings and labeled scales; optional or required answers
+- Editable title, introduction and consent; automatic draft saving and explicit publishing
 - Immutable published revisions; responses preserve the exact question wording and choices
 - Response browsing, pagination and complete CSV export with spreadsheet formula protection
 - Public link, QR code, pause/resume collection, responsive layout and reduced motion
-- Concurrent draft edits cannot silently overwrite each other
+- Concurrent draft edits merge separate fields; overlapping edits pause for explicit review
 
 ## Local development
 
@@ -40,3 +40,11 @@ npm run check:deploy
 Browser tests automatically create a separate local database for each run and use synthetic fixtures. Set CHROMIUM_PATH to an installed Chromium executable when needed. They never use the deployed database. The dependency lockfile pins package versions.
 
 See docs/DEPLOYMENT.md, docs/SECURITY.md and docs/VALIDATION.md for maintenance and verification details.
+
+## Collaborative editing
+
+Draft edits autosave after 650 ms without typing. Saves are serialized and preserve newer keystrokes received while a request is in flight. Visible creator windows check for other creators' saved drafts every five seconds. Publishing remains an explicit action.
+
+The server updates drafts only when the supplied version still matches and returns the exact snapshot written by that request. When a version has changed, the client merges edits against its last acknowledged draft. Independent field edits merge automatically. Overlapping edits, deletion against editing, incompatible question types and conflicting question orders pause saving. The creator can download their local draft, load the latest saved draft, or explicitly choose their values for the conflicting fields. No conflict is overwritten automatically.
+
+The **Labeled scale** type starts at 0 or 1. Enter one distinct label per line; values increase by 1. A scale can have 2–30 labels. Numeric answers, including 0, are stored against the published snapshot, and response views/CSV include the corresponding original label.

@@ -14,7 +14,7 @@ The public Worker accepts anonymous submissions and serves only the active publi
 
 Writes require a matching Origin, a custom request header and JSON. Responses use no-store caching. CSP, anti-framing, no-referrer and MIME-sniffing headers are applied. User content is escaped and SQL is parameterized. Form payloads, credentials and sessions are not logged by the app; Worker observability is disabled in the configs.
 
-D1 stores drafts, immutable published revisions and responses. Each response refers to its exact published version. Required answers, choices, types, bounds and consent are checked on the server. Retries with an identical submission UUID are idempotent; conflicting reuse fails. Concurrent draft saves are checked by version. Pausing collection rejects new submissions. CSV cells are quoted and common spreadsheet formulas are neutralized.
+D1 stores drafts, immutable published revisions and responses. Each response refers to its exact published version. Required answers, choices, types, bounds and consent are checked on the server. Retries with an identical submission UUID are idempotent; conflicting reuse fails. Concurrent draft saves are checked by version and acknowledge their own atomic database snapshot. The client merges independent edits; overlapping edits remain local and pause saving until explicitly resolved. Drafts are saved automatically, while publication is still explicit. Pausing collection rejects new submissions. CSV cells are quoted and common spreadsheet formulas are neutralized.
 
 ## Limits
 

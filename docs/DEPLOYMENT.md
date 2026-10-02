@@ -40,6 +40,8 @@ Creator: DB, ASSETS, APP_MODE=admin, ENVIRONMENT=production, AUTH_MODE=shared-pa
 
 ## First study
 
-Enter an approved password at the creator dashboard. Add the actual class questions and any introduction/consent, save, then publish. Share the respondent link or generated QR. Test fixtures were kept in isolated local databases; there is no artificial production study or participant response.
+Enter an approved password at the creator dashboard. Add the actual class questions and any introduction/consent, wait for All changes saved, then publish. Share the respondent link or generated QR. Test fixtures were kept in isolated local databases; there is no artificial production study or participant response.
 
 For a future switch to Cloudflare Access, configure an explicit email allow policy, protect the creator Worker's route, replace the shared-password mode with ACCESS_TEAM_DOMAIN, ACCESS_AUD and ADMIN_EMAILS, and test verified login before using it. Keep the public Worker outside that policy.
+
+Labeled scales and autosave use the existing JSON draft/revision schema. No new migration or resources are needed. Existing published definitions and responses are preserved.
