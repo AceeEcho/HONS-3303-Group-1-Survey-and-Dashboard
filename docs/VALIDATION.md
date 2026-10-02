@@ -1,38 +1,39 @@
 # Validation report
 
-Date: 2026-10-02. This report separates verified behavior from remaining checks.
+Verified locally and on Cloudflare on 2026-10-02.
 
-## Passed in the cloud workspace
+## Automated checks
 
-- Production frontend build with Vite
-- Cloudflare Wrangler dry-run packaging passes for both public and creator Workers, including D1, static assets and rate-limiter bindings (no upload/deployment performed)
-- 10 automated test cases, including a full D1 integration lifecycle on the Cloudflare workerd/Miniflare local runtime
-- Empty drafts allowed; empty or invalid studies cannot publish
-- All four question formats; required fields, allowed choices, rating bounds, consent, unexpected question IDs, duplicate IDs/choices
-- Explicit save and optimistic concurrency reject stale drafts
-- Publishing saves immutable versions; database UPDATE/DELETE attempts on published revisions are rejected
-- Responses are saved in D1, not browser localStorage; snapshots retain original wording after a later edited/reordered publication
-- Duplicate retry of the same response UUID is idempotent; conflicting reuse is rejected
-- In-flight old-version submission remains tied to that version; paused collection rejects new submissions
-- Private export contains original versioned question text and protects against common CSV formula injection
-- Same-origin write guard rejects another Origin
-- Correctly signed/authorized JWT succeeds; forged signatures, wrong audience, expired tokens and unapproved emails fail
-- Local sign-in is not accepted on a non-loopback hostname or in production mode
-- Public-host admin UI, management, response-read and export paths return 404
-- Unconfigured creator deployment fails closed; no creator HTML/data served
-- Content security and anti-framing headers applied
-- `npm audit --omit=dev` reported zero known production dependency vulnerabilities at the time of testing
+- 13 unit/integration tests passed, including the full local D1 save/publish/submit/export lifecycle.
+- Shared-password sessions: approved and invalid passwords, secure cookie flags, missing/forged/expired/wrong-host/revoked sessions, missing configuration, same-origin enforcement, throttling, sign-out and session-status endpoint.
+- Existing Access JWT validation remains tested as an alternative mode.
+- Immutable revisions, required answers/consent, choice/rating validation, optimistic draft concurrency, idempotent retries, pause/resume and CSV formula escaping.
+- Local preview authentication cannot be used on a production or non-loopback host.
+- Production configuration checks and frontend build passed; both Workers deployed successfully.
+- Production dependency audit reported zero known vulnerabilities.
 
-## Pending browser QA
+## Browser checks
 
-The packaged Playwright end-to-end test suite was attempted, but this cloud executor blocks Chromium's required process socket (`socket() failed: Operation not permitted`) before a page can load. The cloud browser also rejected the loopback preview URL (`ERR_BLOCKED_BY_CLIENT`). No layout screenshot, mobile rendering, real browser flow or reduced-motion render is claimed as verified here.
+The desktop/mobile browser test passed using an isolated local D1 database. It created a labeled QA survey, saved/reloaded/published it, rendered a QR, rejected an empty required answer, submitted a synthetic response, inspected it and checked reduced motion. No fixtures were written to production.
 
-`tests/browser.spec.js` is ready to run on a permitted local environment. It checks desktop and 390px mobile layout, no horizontal overflow, add/edit/required/save/reload/publish, local QR rendering, required-answer validation, response submission, private response inspection and reduced motion. It writes desktop/mobile screenshots to docs/ when it runs. Synthetic fixtures are clearly labeled and must use an empty local test database, never real research data.
+The local Chrome browser was used to sign into the live creator app, open builder/responses/sharing, and sign out. The live builder and sign-in screen were inspected at 390px width, with no horizontal overflow. Desktop and mobile sign-in/public-page visual lint reports have zero findings after contrast corrections. The local creator-page visual lint reports also have zero findings. Visual lint is a useful layout check, not a complete accessibility audit.
 
-For a Mac, set CHROMIUM_PATH to a verified installed Chrome executable, such as the executable inside its application bundle, before running `npm run test:browser`. Do not assume its path without checking. Alternatively install Playwright's supported Chromium and update the launch configuration to use it.
+## Live checks
 
-## Pending production checks
+- All four owner-supplied shared passwords accepted; an incorrect password rejected.
+- Missing or forged sessions rejected for draft, response-read and CSV export endpoints.
+- Authenticated reads/export and logout worked; cross-origin login rejected.
+- Public root and survey endpoint are accessible without an account.
+- Public creator UI, draft, response-read and export endpoints return 404.
+- Production remains an empty unpublished draft: zero questions, zero published revisions, zero responses.
+- Creator uses the selected shared-password gate, not Cloudflare Access or verified email identity.
+- Workers/D1 are on the existing account; preview deployments disabled. No paid service, API token, domain or existing EchoShop/WakeDock resource was changed.
 
-No live resources were created or deployed. Cloudflare account access could not be verified due to the provider's verification screen; existing account or sign-in state is unknown. Real Access sign-in, free-plan capacity, end-to-end production persistence, approved-account access, unapproved-account denial and the public hosted QR destination must be checked once the actual account and resources are available.
+Current deployment versions:
 
-Passing local tests is not a formal security audit or research/compliance approval.
+- Creator: d23282fa-69f3-4c8b-be00-b679bc5e9466 (four-password secret update)
+- Public: f2ffe1c6-27f3-444a-9196-2f298043d8f8
+
+## Still needed by the study creators
+
+Add the actual study questions and introduction/consent, save and publish, then share the public link or QR. Production save/publish/submission was not exercised with artificial content so the real database remains clean; those flows passed on the local D1 runtime. Establish any study-specific data handling requirements before inviting respondents. These checks do not constitute research approval or a formal security audit.

@@ -8,7 +8,7 @@
     "build": "vite build",
     "dev": "npm run build && wrangler dev --config wrangler.local.jsonc --ip 127.0.0.1 --port 8787 --inspector-port 9230",
     "db:local": "wrangler d1 migrations apply DB --local --config wrangler.local.jsonc",
-    "test": "node --test tests/unit.test.js tests/integration.test.js",
+    "test": "node --test tests/unit.test.js tests/password-auth.test.js tests/integration.test.js",
     "test:browser": "playwright test",
     "check:deploy": "node scripts/check-deploy.mjs",
     "deploy:public": "npm run check:deploy && npm run build && wrangler deploy --config wrangler.public.jsonc",

@@ -1,0 +1,11 @@
+{
+  "tool": "visual_lint",
+  "target": "http://127.0.0.1:8787/admin",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "finding_count": 0,
+  "findings": [],
+  "generated_at": "2026-10-02T14:14:27.369Z"
+}

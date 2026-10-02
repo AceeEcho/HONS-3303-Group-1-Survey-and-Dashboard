@@ -1,0 +1,11 @@
+{
+  "tool": "visual_lint",
+  "target": "https://dashboard-hons3303survey.echowake.workers.dev/admin",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "finding_count": 0,
+  "findings": [],
+  "generated_at": "2026-10-02T14:31:49.912Z"
+}
